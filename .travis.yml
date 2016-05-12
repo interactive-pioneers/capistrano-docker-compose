@@ -1,0 +1,11 @@
+language: ruby
+
+rvm:
+  - 2.3.0
+
+install:
+  - bundle
+
+script:
+  - gem build *.gemspec
+  - gem install *.gem
