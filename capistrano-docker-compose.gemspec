@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["at@interactive-pioneers.de"]
 
   spec.summary       = %q{Docker Compose specific tasks for Capistrano.}
-  spec.description   = %q{Docker Compose specific tasks for Capistrano that container deployments.}
+  spec.description   = %q{Docker Compose specific tasks for Capistrano. It adds Docker containers to Capistrano code deployments.}
   spec.homepage      = "https://github.com/interactive-pioneers/capistrano-docker-compose"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.licence       = 'GPL-3.0'
 
   spec.add_dependency 'capistrano', '~> 3.5'
 
