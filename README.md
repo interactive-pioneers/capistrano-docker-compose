@@ -2,6 +2,13 @@
 
 Docker Compose specific tasks for Capistrano. It adds Docker containers to Capistrano code deployments.
 
+## Requirements
+
+- Capistrano 3.5
+- Docker Engine 1.11
+- Docker Compose 1.7
+- HAProxy 1.6
+
 ## Installation
 
 Add this line to your application's Gemfile:
