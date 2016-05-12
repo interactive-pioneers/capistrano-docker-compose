@@ -28,16 +28,21 @@ Create Docker Compose descriptors for each environment leaving `docker-compose.y
 
 Add `capistrano-docker-compose` to `Capfile`:
 
-    # Capfile
-    require 'capistrano/docker/compose'
+``` ruby
+# Capfile
+require 'capistrano/docker/compose'
+```
 
-You can configure following Docker Compose specific options in `config/deploy.rb`:
+You can configure following Docker Compose specific options in `config/deploy.rb` and/or `config/deploy/<environment>.rb`:
 
-    # User name when running the Docker image (reflecting Docker's USER instruction)
-    set :docker_compose_user, '<username>'
+```ruby
+# User name when running the Docker image (reflecting Docker's USER instruction)
+set :docker_compose_user, '<username>'
 
-    # Define port range in respect to load balancer on server
-    set :docker_compose_port_range, <port>..<port>
+# Define port range in respect to load balancer on server
+# If 2 or more environments reside on same server, configure port range as per environment
+set :docker_compose_port_range, <port>..<port>
+```
 
 Configure load balancer on server using port range defined in `docker_compose_port_range`.
 
