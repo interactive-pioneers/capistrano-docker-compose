@@ -44,11 +44,13 @@ You can configure following Docker Compose specific options in `config/deploy.rb
 
 ```ruby
 # User name when running the Docker image (reflecting Docker's USER instruction)
+# Example: set :docker_compose_user, 'pioneer'
 set :docker_compose_user, '<username>'
 
 # Define port range in respect to load balancer on server
 # If 2 or more environments reside on same server, configure port range as per environment
 # Ruby's Range object is expected, see http://ruby-doc.org/core-2.3.0/Range.html
+# Example: set :docker_compose_port_range, 2070..2080
 set :docker_compose_port_range, <port>..<port>
 ```
 
