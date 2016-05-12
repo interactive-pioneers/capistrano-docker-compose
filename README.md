@@ -44,3 +44,7 @@ Configure load balancer on server using port range defined in `docker_compose_po
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/interactive-pioneers/capistrano-docker-compose. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+## Licence
+
+Copyright © 2016 Ain Tohvri, Interactive Pioneers GmbH. Licenced under [GPL-3](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/LICENSE).
