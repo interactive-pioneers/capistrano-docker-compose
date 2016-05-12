@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["at@interactive-pioneers.de"]
 
   spec.summary       = %q{Docker Compose specific tasks for Capistrano.}
-  spec.description   = %q{Docker Compose specific tasks for Capistrano, adding Docker containers to Capistrano code deployments.}
+  spec.description   = %q{Docker Compose specific tasks for Capistrano allowing seamless zero downtime containerised deployments.}
   spec.homepage      = "https://github.com/interactive-pioneers/capistrano-docker-compose"
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"

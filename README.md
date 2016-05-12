@@ -1,6 +1,6 @@
 # Capistrano::Docker::Compose
 
-Docker Compose specific tasks for Capistrano, adding Docker containers to Capistrano code deployments.
+Docker Compose specific tasks for Capistrano allowing seamless zero downtime containerised deployments.
 
 ## Requirements
 
