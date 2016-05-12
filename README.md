@@ -1,8 +1,6 @@
 # Capistrano::Docker::Compose
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/capistrano/docker/compose`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Docker Compose specific tasks for Capistrano. It adds Docker containers to Capistrano code deployments.
 
 ## Installation
 
@@ -22,15 +20,27 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Create Docker Compose descriptors for each environment leaving `docker-compose.yml` as default for development environment, e.g.:
 
-## Development
+  - `docker-compose.yml`
+  - `docker-compose-staging.yml`
+  - `docker-compose-production.yml`
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Add `capistrano-docker-compose` to `Capfile`:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+    # Capfile
+    require 'capistrano/docker/compose'
+
+You can configure following Docker Compose specific options in `config/deploy.rb`:
+
+    # User name when running the Docker image (reflecting Docker's USER instruction)
+    set :docker_compose_user, '<username>'
+
+    # Define port range in respect to load balancer on server
+    set :docker_compose_port_range, <port>..<port>
+
+Configure load balancer on server using port range defined in `docker_compose_port_range`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/capistrano-docker-compose. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/interactive-pioneers/capistrano-docker-compose. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
