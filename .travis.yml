@@ -9,3 +9,8 @@ install:
 script:
   - gem build *.gemspec
   - gem install *.gem
+
+notifications:
+  hipchat:
+    rooms:
+      secure: "dpCkfmvv1TBgAKtsFTa6mnY4lBjK4gBpNLqu10pTZo8wVW89TRta0/b4MiOQU+2/J2WlRJ8VpnNDRTFdNYIaHskLLSMbNz62KOetThJMyA95qzr4o1noXjkImjITv828CCxjdp+mle8Nt1e7cVXvRFd6+cu1o/bMxhh9WzqQeic25Z40BymGHv/WoY7TYk+TR1k8Au4ix79K0x1v9lvBGXiShqyENdy36w9spd0eBZ0H+N9z3HAI10gxkEoje7YB32Q43RqCsaqBvA5BU0VxHa14ZC7dz6ovnDfA55mVDBDGw8woyw60JxZsOe3aIDHyugJwtCBR07aZtmneye8dO5gcwSlDTPJ2pU4FGEDax9mmbe885SlWw53Qyu3z/FW7PvLrvPBzD4PVQBkIq7D3BacbUIMdOh8vixiR2TYUuKjrISpYYo2SyIEoAJGzdgFS2MqM868WSygt6ygcH9Teu4dfN/jldU1vhCWQI0DoMMELzI1/X7mpTLYAC/qyOCevyeV9veX/goO77SRvHx9eP8pUXuLqZpMrgyDrLIQn/83Jim3A3YbKauRjfq13zMVNZ7BEP9s+awOCm+4nWsStIzXmgRgGm5nx55KO+qGdpmeG9u3egvBeLPLyCCkCqa9JFRQ18FBCv76SuAPs0Nu0tdxEBiwVGCzSsSzS856Yh7Q="
