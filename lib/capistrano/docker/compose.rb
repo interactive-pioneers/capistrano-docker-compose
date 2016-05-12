@@ -1,9 +1,4 @@
+require "sshkit"
+require "capistrano"
 require "capistrano/docker/compose/version"
-
-module Capistrano
-  module Docker
-    module Compose
-      # Your code goes here...
-    end
-  end
-end
+load File.expand_path("../tasks/compose.rake", __FILE__)
