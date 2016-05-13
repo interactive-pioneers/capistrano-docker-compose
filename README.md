@@ -33,6 +33,13 @@ Create Docker Compose descriptors for each environment leaving `docker-compose.y
   - `docker-compose-staging.yml`
   - `docker-compose-production.yml`
 
+Make Compose YAML dynamic with following environment variables:
+
+- `CAP_DOCKER_COMPOSE_ROOT_PATH` for shared path
+- `CAP_DOCKER_COMPOSE_PORT` for port range
+
+See also [Compose YAML example](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/docker-compose-staging.example.yml).
+
 Add `capistrano-docker-compose` to `Capfile`:
 
 ``` ruby

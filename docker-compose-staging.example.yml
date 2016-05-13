@@ -1,0 +1,14 @@
+version: '2'
+services:
+  web:
+    image: ipioneers/passenger-ruby:2.3
+    expose:
+      - 80
+    volumes:
+      - .:/home/app
+      - ../../shared:${CAP_DOCKER_COMPOSE_ROOT_PATH}/shared
+    ports:
+      - "${CAP_DOCKER_COMPOSE_PORT}:80"
+    environment:
+      - RAILS_ENV=staging
+      - PASSENGER_APP_ENV=staging
