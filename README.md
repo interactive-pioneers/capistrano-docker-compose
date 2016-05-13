@@ -47,18 +47,19 @@ Add `capistrano-docker-compose` to `Capfile`:
 require 'capistrano/docker/compose'
 ```
 
-You can configure following Docker Compose specific options in `config/deploy.rb` and/or `config/deploy/<environment>.rb`:
+Configure following Docker Compose specific options in `config/deploy.rb` and/or `config/deploy/<environment>.rb`:
 
 ```ruby
-# User name when running the Docker image (reflecting Docker's USER instruction)
-# Example: set :docker_compose_user, 'pioneer'
-set :docker_compose_user, '<username>'
-
 # Define port range in respect to load balancer on server
 # If 2 or more environments reside on same server, configure port range as per environment
 # Ruby's Range object is expected, see http://ruby-doc.org/core-2.3.0/Range.html
 # Example: set :docker_compose_port_range, 2070..2071
 set :docker_compose_port_range, <port>..<port>
+
+# OPTIONAL
+# User name when running the Docker image (reflecting Docker's USER instruction)
+# Example: set :docker_compose_user, 'pioneer'
+set :docker_compose_user, '<username>'
 ```
 
 Configure load balancer with port range defined in `docker_compose_port_range`, see [example configuration](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/haproxy.example.cfg).
