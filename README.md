@@ -1,4 +1,4 @@
-# Capistrano::Docker::Compose [![Build Status](https://travis-ci.org/interactive-pioneers/capistrano-docker-compose.svg?branch=master)](https://travis-ci.org/interactive-pioneers/capistrano-docker-compose)
+# Capistrano::Docker::Compose [![Build Status](https://travis-ci.org/interactive-pioneers/capistrano-docker-compose.svg?branch=master)](https://travis-ci.org/interactive-pioneers/capistrano-docker-compose) [![Gem Version](https://badge.fury.io/rb/capistrano-docker-compose.svg)](https://badge.fury.io/rb/capistrano-docker-compose)
 
 Docker Compose specific tasks for Capistrano allowing seamless zero downtime containerised deployments.
 
