@@ -1,11 +1,15 @@
-SSHKit.config.command_map.prefix[:bundle].push("docker-compose exec web")
+# Rewire key commands to container
+%i(bundle rake).map do |command|
+  SSHKit.config.command_map.prefix[command].push("docker-compose exec web")
+end
 
 namespace :deploy do
 
   set :previous_release_path, nil
+  set :docker_compose_roles, :all
 
   task :pull_images do
-    on roles(:docker), in: :groups, limit: 3, wait: 10 do
+    on roles(fetch(:docker_compose_roles)), in: :groups, limit: 3, wait: 10 do
       within release_path do
         execute :'docker-compose', 'pull'
         # TODO: confirm successful pull
@@ -14,7 +18,7 @@ namespace :deploy do
   end
 
   task :start_containers do
-    on roles(:docker) do
+    on roles(fetch(:docker_compose_roles)) do
       set :previous_release_path, previous_release
       within release_path do
         with cap_docker_compose_root_path: fetch(:deploy_to), cap_docker_compose_port: detect_available_port do
@@ -27,7 +31,7 @@ namespace :deploy do
   task :claim_files_by_container do
     user = fetch(:docker_compose_user)
     unless user.nil?
-      on roles(:docker) do
+      on roles(fetch(:docker_compose_roles)) do
         within release_path do
           execute :'docker-compose', 'exec', 'web', 'chown', '-R', "#{user}:#{user}", '.'
         end
@@ -36,7 +40,7 @@ namespace :deploy do
   end
 
   task :purge_old_containers do
-    on roles(:docker) do
+    on roles(fetch(:docker_compose_roles)) do
       if fetch(:previous_release_path)
         info "Purging previous release containers at #{fetch(:previous_release_path)}"
         within fetch(:previous_release_path) do
@@ -47,7 +51,7 @@ namespace :deploy do
   end
 
   task :purge_failed_containers do
-    on roles(:docker) do
+    on roles(fetch(:docker_compose_roles)) do
       within release_path do
         execute :'docker-compose', 'down'
       end
