@@ -9,7 +9,7 @@ namespace :deploy do
   set :docker_compose_roles, :all
 
   task :pull_images do
-    on roles(fetch(:docker_compose_roles)), in: :groups, limit: 3, wait: 10 do
+    on roles(fetch(:docker_compose_roles)) do
       within release_path do
         execute :'docker-compose', 'pull'
         # TODO: confirm successful pull
