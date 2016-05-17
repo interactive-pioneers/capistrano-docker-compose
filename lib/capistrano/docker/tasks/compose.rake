@@ -1,5 +1,7 @@
 # Rewire key commands to container
 %i(bundle rake).map do |command|
+  # FIXME: replace hard-coded web service with master service setting
+  # https://github.com/interactive-pioneers/capistrano-docker-compose/issues/7
   SSHKit.config.command_map.prefix[command].push("docker-compose exec web")
 end
 
