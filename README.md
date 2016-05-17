@@ -60,6 +60,12 @@ set :docker_compose_port_range, <port>..<port>
 # User name when running the Docker image (reflecting Docker's USER instruction)
 # Example: set :docker_compose_user, 'pioneer'
 set :docker_compose_user, '<username>'
+
+# OPTIONAL
+# Roles considered
+# Defaults to :all
+# Example: set :docker_compose_roles, :web
+set :docker_compose_roles, <roles>
 ```
 
 Configure load balancer with port range defined in `docker_compose_port_range`, see [example configuration](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/haproxy.example.cfg).
