@@ -51,6 +51,21 @@ namespace :deploy do
     end
   end
 
+  # docker-compose down is not removing used networks
+  # and therefore exclusive removal is required.
+  # See https://github.com/docker/compose/issues/2279
+  #
+  task :purge_old_networks do
+    on roles(fetch(:docker_compose_roles)) do
+      begin
+        previous_release = Pathname.new(fetch(:previous_release_path)).basename
+        execute :docker, 'network', 'rm', "#{previous_release}_default"
+      rescue
+        warn "Failed to remove previously used network! Consider removing manually on server with: docker network rm <network>"
+      end
+    end
+  end
+
   task :purge_failed_containers do
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
@@ -85,6 +100,7 @@ namespace :deploy do
   before :publishing, :claim_files_by_container
   after :failed, :purge_failed_containers
   after :finished, :purge_old_containers
+  after :finished, :purge_old_networks
 
 end
 
