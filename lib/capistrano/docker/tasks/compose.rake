@@ -83,7 +83,8 @@ namespace :deploy do
   after :updating, :pull_images
   after :updating, :start_containers
   before :publishing, :claim_files_by_container
-  after :failed, :purge_failed_containers
+  before :failed, :purge_failed_containers
+  after :failed, :cleanup_rollback
   after :finished, :purge_old_containers
 
 end
