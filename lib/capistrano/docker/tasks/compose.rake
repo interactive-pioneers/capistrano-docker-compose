@@ -7,8 +7,6 @@ end
 
 namespace :deploy do
 
-  set :previous_release_path, nil
-
   task :pull_images do
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
@@ -92,5 +90,6 @@ end
 namespace :load do
   task :defaults do
     set :docker_compose_roles, fetch(:docker_compose_roles, :all)
+    set :previous_release_path, nil
   end
 end
