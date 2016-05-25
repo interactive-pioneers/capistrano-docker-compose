@@ -33,7 +33,7 @@ Create Docker Compose descriptors for each environment leaving `docker-compose.y
   - `docker-compose-staging.yml`
   - `docker-compose-production.yml`
 
-Make Compose YAML dynamic with following environment variables:
+Make Compose YAML with `web` service using following environment variables:
 
 - `CAP_DOCKER_COMPOSE_ROOT_PATH` for shared path
 - `CAP_DOCKER_COMPOSE_PORT` for port range
