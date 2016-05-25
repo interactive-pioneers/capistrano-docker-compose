@@ -50,6 +50,7 @@ namespace :deploy do
   end
 
   task :purge_failed_containers do
+    set :cap_docker_compose_failed, true
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
         execute :'docker-compose', 'down'
@@ -81,9 +82,10 @@ namespace :deploy do
   after :updating, :pull_images
   after :updating, :start_containers
   before :publishing, :claim_files_by_container
-  before :failed, :purge_failed_containers
+  before :failed, :claim_files_by_container
+  after :failed, :purge_failed_containers
   after :failed, :cleanup_rollback
-  after :finished, :purge_old_containers
+  after :finished, :purge_old_containers unless fetch(:cap_docker_compose_failed, false)
 
 end
 
