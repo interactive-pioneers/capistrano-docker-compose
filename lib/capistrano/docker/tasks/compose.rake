@@ -22,6 +22,9 @@ namespace :deploy do
       within release_path do
         with cap_docker_compose_root_path: fetch(:deploy_to), cap_docker_compose_port: detect_available_port do
           execute :'docker-compose', '-f', "docker-compose-#{fetch(:rails_env)}.yml", 'up', '-d'
+          # Give services 3s to come up
+          # TODO: implement flexibly into options
+          sleep 3
         end
       end
     end
