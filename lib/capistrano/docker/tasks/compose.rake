@@ -25,6 +25,9 @@ namespace :deploy do
           # Give services 3s to come up
           # TODO: implement flexibly into options
           sleep 3
+          if test("[ -z $(docker-compose ps -q) ]")
+            raise Capistrano::Docker::Compose::ComposeError, "Containers failed to start"
+          end
         end
       end
     end
