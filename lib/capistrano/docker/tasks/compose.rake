@@ -56,7 +56,7 @@ namespace :deploy do
                   execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
                   execute :rm, "#{output_path}/*.pid"
 
-                  new_release_name = Pathname.new(relepase_path).basename.to_s
+                  new_release_name = Pathname.new(release_path).basename.to_s
                   new_container_id = capture("docker ps --filter 'name=#{new_release_name}_#{service[0]}'")
                   info "Copying data from #{output_path} to #{new_container_id}:#{persistant_path}"
                   execute :docker, 'cp', output_path, "#{new_container_id}:#{persistant_path}"
