@@ -46,12 +46,14 @@ namespace :deploy do
               compose_config['services'].to_a.each do |service|
                 info "Checking #{service} service for volume #{current_volume}"
                 service_volumes = service[1]['volumes']
+
+                # FIXME: cycle through all service volumes
                 if service_volumes && service_volumes[0] && service_volumes[0].split(':')[0] == current_volume && service_volumes[0].split(':').count > 1
                   persistant_path = service_volumes[0].split(':')[1]
                   info "Persistant path for #{current_volume} set to #{persistant_path}"
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
                   container_id = capture("docker ps --filter 'name=#{release_name}_#{service[0]}'")
-                  output_path = "/tmp/cap_docker_compose/#{container_id}"
+                  output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
                   info "Copying data from #{container_id}:#{persistant_path} to #{output_path}"
                   execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
                   execute :rm, "#{output_path}/*.pid"
