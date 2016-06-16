@@ -30,10 +30,11 @@ namespace :deploy do
     end
   end
 
+  # TODO: extract to class and DRY up
   task :sync_persistant_volumes do
     on roles(fetch(:docker_compose_roles)) do
       if fetch(:docker_compose_persistant_volumes, false)
-        info "Syncing persistant volumes: #{fetch(:docker_compose_persistant_volumes)}"
+        info "Syncing persistant volume(s) #{fetch(:docker_compose_persistant_volumes).join(', ')}"
         within fetch(:previous_release_path) do
           compose_config = YAML.load_file("docker-compose-#{fetch(:rails_env)}.yml")
           info "Compose config fetched: #{compose_config}"
@@ -41,16 +42,24 @@ namespace :deploy do
             current_volume = volume[0]
             info "Analysing volume #{current_volume}"
             if fetch(:docker_compose_persistant_volumes).include?(current_volume)
-              info "#{current_volume} found to be persistant"
+              info "#{current_volume} identified as persistant"
               compose_config['services'].to_a.each do |service|
                 info "Checking #{service} service for volume #{current_volume}"
                 service_volumes = service[1]['volumes']
-                if service_volumes && service_volumes[0] && service_volumes[0].split(':')[0] == current_volume && service_volumes[0].split(':')[1]
+                if service_volumes && service_volumes[0] && service_volumes[0].split(':')[0] == current_volume && service_volumes[0].split(':').count > 1
                   persistant_path = service_volumes[0].split(':')[1]
+                  info "Persistant path for #{current_volume} set to #{persistant_path}"
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
-                  info "Copying data from #{release_name}_#{service[0]}_1:#{persistant_path}"
-                  execute :docker, 'cp', "#{release_name}_#{service[0]}_1:#{persistant_path}", "/tmp/cap_docker_compose_persistant_paths/"
-                  # TODO: push data to new container
+                  container_id = capture("docker ps --filter 'name=#{release_name}_#{service[0]}'")
+                  output_path = "/tmp/cap_docker_compose/#{container_id}"
+                  info "Copying data from #{container_id}:#{persistant_path} to #{output_path}"
+                  execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
+                  execute :rm, "#{output_path}/*.pid"
+
+                  new_release_name = Pathname.new(relepase_path).basename.to_s
+                  new_container_id = capture("docker ps --filter 'name=#{new_release_name}_#{service[0]}'")
+                  info "Copying data from #{output_path} to #{new_container_id}:#{persistant_path}"
+                  execute :docker, 'cp', output_path, "#{new_container_id}:#{persistant_path}"
                 end
               end
             end
