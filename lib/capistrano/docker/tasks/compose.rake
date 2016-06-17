@@ -34,7 +34,7 @@ namespace :deploy do
   task :sync_persistant_volumes do
     on roles(fetch(:docker_compose_roles)) do
       if fetch(:docker_compose_persistant_volumes, false)
-        info "Syncing persistant volume(s) #{fetch(:docker_compose_persistant_volumes).join(', ')}"
+        info "Syncing persistant volume(s): #{fetch(:docker_compose_persistant_volumes).join(', ')}"
         within fetch(:previous_release_path) do
           compose_config = YAML.load_file("docker-compose-#{fetch(:rails_env)}.yml")
           info "Compose config fetched: #{compose_config}"
@@ -52,13 +52,13 @@ namespace :deploy do
                   persistant_path = service_volumes[0].split(':')[1]
                   info "Persistant path for #{current_volume} set to #{persistant_path}"
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
-                  container_id = capture("docker ps --filter 'name=#{release_name}_#{service[0]}'")
+                  container_id = capture("docker ps -q --filter 'name=#{release_name}_#{service[0]}'")
                   output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
                   execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
                   execute :rm, "#{output_path}/*.pid"
 
                   new_release_name = Pathname.new(release_path).basename.to_s
-                  new_container_id = capture("docker ps --filter 'name=#{new_release_name}_#{service[0]}'")
+                  new_container_id = capture("docker ps -q --filter 'name=#{new_release_name}_#{service[0]}'")
                   execute :docker, 'cp', output_path, "#{new_container_id}:#{persistant_path}"
                 end
               end
