@@ -53,16 +53,18 @@ namespace :deploy do
                   info "Persistant path for #{current_volume} set to #{persistant_path}"
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
                   container_id = capture("docker ps -q --filter 'name=#{release_name}_#{service[0]}'")
-                  output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
-                  execute :mkdir, '-p', output_path
-                  execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
-                  #execute :rm, '-rf', "#{output_path}#{persistant_path}/*.pid 2> /dev/null"
+                  unless container_id.empty?
+                    output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
+                    execute :mkdir, '-p', output_path
+                    execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
+                    #execute :rm, '-rf', "#{output_path}#{persistant_path}/*.pid 2> /dev/null"
 
-                  execute :find, output_path, '-name', '*.pid', '-delete'
+                    execute :find, output_path, '-name', '*.pid', '-delete'
 
-                  new_release_name = Pathname.new(release_path).basename.to_s
-                  new_container_id = capture("docker ps -q --filter 'name=#{new_release_name}_#{service[0]}'")
-                  execute :docker, 'cp', "#{output_path}/*", "#{new_container_id}:#{persistant_path}"
+                    new_release_name = Pathname.new(release_path).basename.to_s
+                    new_container_id = capture("docker ps -q --filter 'name=#{new_release_name}_#{service[0]}'")
+                    execute :docker, 'cp', "#{output_path}/postgresql/*", "#{new_container_id}:#{persistant_path}"
+                  end
                 end
               end
             end
