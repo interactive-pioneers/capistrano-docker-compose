@@ -54,6 +54,7 @@ namespace :deploy do
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
                   container_id = capture("docker ps -q --filter 'name=#{release_name}_#{service[0]}'")
                   output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
+                  execute :mkdir, '-p', output_path
                   execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
                   execute :rm, "#{output_path}/*.pid"
 
