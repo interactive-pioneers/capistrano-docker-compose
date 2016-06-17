@@ -54,13 +54,11 @@ namespace :deploy do
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
                   container_id = capture("docker ps --filter 'name=#{release_name}_#{service[0]}'")
                   output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
-                  info "Copying data from #{container_id}:#{persistant_path} to #{output_path}"
                   execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
                   execute :rm, "#{output_path}/*.pid"
 
                   new_release_name = Pathname.new(release_path).basename.to_s
                   new_container_id = capture("docker ps --filter 'name=#{new_release_name}_#{service[0]}'")
-                  info "Copying data from #{output_path} to #{new_container_id}:#{persistant_path}"
                   execute :docker, 'cp', output_path, "#{new_container_id}:#{persistant_path}"
                 end
               end
