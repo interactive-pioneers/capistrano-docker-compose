@@ -31,39 +31,39 @@ namespace :deploy do
   end
 
   # TODO: extract to class and DRY up
-  task :sync_persistant_volumes do
+  task :sync_persistent_volumes do
     on roles(fetch(:docker_compose_roles)) do
-      if fetch(:docker_compose_persistant_volumes, false)
-        info "Syncing persistant volume(s): #{fetch(:docker_compose_persistant_volumes).join(', ')}"
+      if fetch(:docker_compose_persistent_volumes, false)
+        info "Syncing persistent volume(s): #{fetch(:docker_compose_persistent_volumes).join(', ')}"
         within fetch(:previous_release_path) do
           compose_config = YAML.load_file("docker-compose-#{fetch(:rails_env)}.yml")
           info "Compose config fetched: #{compose_config}"
           compose_config['volumes'].to_a.each do |volume|
             current_volume = volume[0]
             info "Analysing volume #{current_volume}"
-            if fetch(:docker_compose_persistant_volumes).include?(current_volume)
-              info "#{current_volume} identified as persistant"
+            if fetch(:docker_compose_persistent_volumes).include?(current_volume)
+              info "#{current_volume} identified as persistent"
               compose_config['services'].to_a.each do |service|
                 info "Checking #{service} service for volume #{current_volume}"
                 service_volumes = service[1]['volumes']
 
                 # FIXME: cycle through all service volumes
                 if service_volumes && service_volumes[0] && service_volumes[0].split(':')[0] == current_volume && service_volumes[0].split(':').count > 1
-                  persistant_path = service_volumes[0].split(':')[1]
-                  info "Persistant path for #{current_volume} set to #{persistant_path}"
+                  persistent_path = service_volumes[0].split(':')[1]
+                  info "persistent path for #{current_volume} set to #{persistent_path}"
                   release_name = Pathname.new(fetch(:previous_release_path)).basename.to_s
                   container_id = capture("docker ps -q --filter 'name=#{release_name}_#{service[0]}'")
                   unless container_id.empty?
                     output_path = "/tmp/cap_docker_compose/#{container_id}/#{current_volume}"
                     execute :mkdir, '-p', output_path
-                    execute :docker, 'cp', "#{container_id}:#{persistant_path}", output_path
-                    #execute :rm, '-rf', "#{output_path}#{persistant_path}/*.pid 2> /dev/null"
+                    execute :docker, 'cp', "#{container_id}:#{persistent_path}", output_path
+                    #execute :rm, '-rf', "#{output_path}#{persistent_path}/*.pid 2> /dev/null"
 
                     execute :find, output_path, '-name', '*.pid', '-delete'
 
                     new_release_name = Pathname.new(release_path).basename.to_s
                     new_container_id = capture("docker ps -q --filter 'name=#{new_release_name}_#{service[0]}'")
-                    execute :docker, 'cp', "#{output_path}/postgresql/*", "#{new_container_id}:#{persistant_path}"
+                    execute :docker, 'cp', "#{output_path}/postgresql/*", "#{new_container_id}:#{persistent_path}"
                   end
                 end
               end
@@ -128,7 +128,7 @@ namespace :deploy do
 
   after :updating, :pull_images
   after :updating, :start_containers
-  after :updating, :sync_persistant_volumes #if fetch(:previous_release_path, false)
+  after :updating, :sync_persistent_volumes #if fetch(:previous_release_path, false)
   before :publishing, :claim_files_by_container
   before :failed, :claim_files_by_container
   after :failed, :purge_failed_containers
