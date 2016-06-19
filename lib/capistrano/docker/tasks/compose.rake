@@ -63,12 +63,24 @@ namespace :deploy do
 
                     new_release_name = Pathname.new(release_path).basename.to_s
                     new_container_id = capture("docker ps -q --filter 'name=#{new_release_name}_#{service[0]}'")
+                    execute :docker, 'exec', container_id, 'ls', '-la', "#{persistent_path}/data/pgdata"
+
                     execute :docker, 'cp', "#{output_path}/postgresql/*", "#{new_container_id}:#{persistent_path}"
+                    # FIXME: adjust UID
+                    execute :docker, 'exec', new_container_id, 'chown', '-R', 'postgres', persistent_path
+                    #execute :'docker-compose', 'exec', 'db', 'sudo', 'chown', '-R', 'postgres', persistent_path
+                    execute :docker, 'exec', new_container_id, 'ls', '-la', "#{persistent_path}/data/pgdata"
                   end
                 end
               end
             end
           end
+        end
+
+        within release_path do
+          execute :'docker-compose', 'restart'
+          sleep 20
+          execute :'docker-compose', 'ps'
         end
       end
     end
