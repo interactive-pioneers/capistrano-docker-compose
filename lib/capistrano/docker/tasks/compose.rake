@@ -16,6 +16,16 @@ namespace :deploy do
     end
   end
 
+  task :pause_previous_containers do
+    on roles(fetch(:docker_compose_roles)) do
+      if fetch(:previous_release_path, false)
+        within previous_release_path do
+          execute :'docker-compose', 'pause'
+        end
+      end
+    end
+  end
+
   task :start_containers do
     on roles(fetch(:docker_compose_roles)) do
       set :previous_release_path, previous_release
@@ -43,11 +53,25 @@ namespace :deploy do
 
   task :purge_old_containers do
     on roles(fetch(:docker_compose_roles)) do
-      if fetch(:previous_release_path)
+      if fetch(:previous_release_path, false)
         info "Purging previous release containers at #{fetch(:previous_release_path)}"
+
+        release_name = Pathname.new(release_path).basename.to_s
+        web_container_id = capture("docker ps -q --filter 'name=#{release_name}_web'")
+        execute :docker, 'pause', web_container_id
+
         within fetch(:previous_release_path) do
           execute :'docker-compose', 'down'
         end
+
+        db_container_id = capture("docker ps -q --filter 'name=#{release_name}_db'")
+        execute :docker, 'restart', db_container_id
+
+        # Give services 3s to come up
+        # TODO: implement flexibly into options
+        sleep 3
+
+        execute :docker, 'unpause', web_container_id
       end
     end
   end
