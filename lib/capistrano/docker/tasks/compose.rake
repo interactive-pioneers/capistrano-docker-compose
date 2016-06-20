@@ -16,16 +16,6 @@ namespace :deploy do
     end
   end
 
-  task :pause_previous_containers do
-    on roles(fetch(:docker_compose_roles)) do
-      if fetch(:previous_release_path, false)
-        within previous_release_path do
-          execute :'docker-compose', 'pause'
-        end
-      end
-    end
-  end
-
   task :start_containers do
     on roles(fetch(:docker_compose_roles)) do
       set :previous_release_path, previous_release
