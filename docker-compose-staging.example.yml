@@ -12,3 +12,12 @@ services:
     environment:
       - RAILS_ENV=staging
       - PASSENGER_APP_ENV=staging
+  db:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_DB=staging
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=staging_user
+      - POSTGRES_PASSWORD=soZee4Ig+u1f
+    volumes:
+      - ../../shared/postgresql:/var/lib/postgresql/data/pgdata
