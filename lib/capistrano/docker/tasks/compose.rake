@@ -2,7 +2,9 @@
 %i(bundle rake).map do |command|
   # FIXME: replace hard-coded web service with master service setting
   # https://github.com/interactive-pioneers/capistrano-docker-compose/issues/7
-  SSHKit.config.command_map.prefix[command].push("docker-compose exec web bash -lc")
+  # FIXME: restore command execution on login shell once SSHKit allows command map suffixes
+  # https://github.com/capistrano/sshkit/issues/366
+  SSHKit.config.command_map.prefix[command].push("docker-compose exec web")
 end
 
 namespace :deploy do
