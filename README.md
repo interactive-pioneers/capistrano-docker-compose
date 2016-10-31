@@ -83,8 +83,8 @@ To use `capistrano-docker-compose` on PHP project, such as Wordpress or Drupal:
 	source 'https://rubygems.org'
 
 	group :capistrano do
-		gem 'capistrano-bundler', '~> 1.1.4'
-		gem 'capistrano-docker-compose', '~> 0.1.8'
+		gem 'capistrano-bundler'
+		gem 'capistrano-docker-compose'
 	end
 	```
 2. Run `bundle` to install
