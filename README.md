@@ -72,6 +72,32 @@ Configure load balancer with port range defined in `docker_compose_port_range`, 
 
 NB! Ensure load balancer's HTTP health check uses Layer 7 and corresponds to the needs of the particular application.
 
+### PHP projects
+
+To use `capistrano-docker-compose` on PHP project, such as Wordpress or Drupal:
+
+1. Add `Gemfile` to project root:
+
+	```ruby
+	# Gemfile
+	source 'https://rubygems.org'
+
+	group :capistrano do
+		gem 'capistrano-bundler', '~> 1.1.4'
+		gem 'capistrano-docker-compose', '~> 0.1.8'
+	end
+	```
+2. Run `bundle` to install
+
+If bundling is not desired during deployment (no RubyGems dependencies), Capistrano flow can be altered by removing bundler task:
+
+```ruby
+# config/deploy.rb
+namespace :deploy do
+  Rake::Task["bundler:install"].clear_actions
+end
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/interactive-pioneers/capistrano-docker-compose. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
