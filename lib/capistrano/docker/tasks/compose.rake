@@ -49,22 +49,33 @@ namespace :deploy do
         info "Purging previous release containers at #{fetch(:previous_release_path)}"
 
         # TODO: use to docker-compose pause
-        release_name = Pathname.new(release_path).basename.to_s
-        web_container_id = capture("docker ps -q --filter 'name=#{release_name}_web'")
-        execute :docker, 'pause', web_container_id
+        #release_name = Pathname.new(release_path).basename.to_s
+        #web_container_id = capture("docker ps -q --filter 'name=#{release_name}_web'")
+        #execute :docker, 'pause', web_container_id
+
+
+        #within release_path do
+          #execute :'docker-compose', 'start', 'db'
+          #execute :'docker-compose', 'unpause', 'web'
+          #sleep 1
+        #end
 
         within fetch(:previous_release_path) do
-          execute :'docker-compose', 'down'
+          containers = capture :'docker-compose', 'ps', '-q'
+          unless containers.empty?
+            execute :'docker-compose', 'unpause', 'web'
+            execute :'docker-compose', 'down'
+          end
         end
 
-        db_container_id = capture("docker ps -q --filter 'name=#{release_name}_db'")
-        execute :docker, 'restart', db_container_id
+        #db_container_id = capture("docker ps -q --filter 'name=#{release_name}_db'")
+        #execute :docker, 'restart', db_container_id
 
         # Give services 3s to come up
         # TODO: implement flexibly into options
-        sleep 3
+        #sleep 3
 
-        execute :docker, 'unpause', web_container_id
+        #execute :docker, 'unpause', web_container_id
       end
     end
   end
@@ -74,6 +85,44 @@ namespace :deploy do
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
         execute :'docker-compose', 'down'
+      end
+      within fetch(:previous_release_path) do
+        execute :'docker-compose', 'start', 'db'
+        execute :'docker-compose', 'unpause', 'web'
+      end
+    end
+  end
+
+  task :pause_previous_release do
+    on roles(fetch(:docker_compose_roles)) do
+      if fetch(:previous_release_path, false)
+        within fetch(:previous_release_path) do
+          containers = capture :'docker-compose', 'ps', '-q'
+          unless containers.empty?
+            execute :'docker-compose', 'pause', 'web'
+            execute :'docker-compose', 'stop', 'db'
+          end
+        end
+        within release_path do
+          execute :'docker-compose', 'restart', 'db'
+          sleep 1
+        end
+      end
+    end
+  end
+
+  task :unpause_previous_release do
+    on roles(fetch(:docker_compose_roles)) do
+      if fetch(:previous_release_path, false)
+        within release_path do
+          execute :'docker-compose', 'pause', 'web'
+          execute :'docker-compose', 'stop', 'db'
+        end
+        within fetch(:previous_release_path) do
+          execute :'docker-compose', 'start', 'db'
+          execute :'docker-compose', 'unpause', 'web'
+          sleep 1
+        end
       end
     end
   end
@@ -101,7 +150,8 @@ namespace :deploy do
 
   after :updating, :pull_images
   after :updating, :start_containers
-  after :updating, :pause_containers
+  before :migrate, :pause_previous_release
+  #after :migrate, :unpause_previous_release
   before :publishing, :claim_files_by_container
   before :failed, :claim_files_by_container
   after :failed, :purge_failed_containers
