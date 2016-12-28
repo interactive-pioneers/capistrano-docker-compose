@@ -48,6 +48,7 @@ namespace :deploy do
       if fetch(:previous_release_path, false)
         info "Purging previous release containers at #{fetch(:previous_release_path)}"
 
+        # TODO: use to docker-compose pause
         release_name = Pathname.new(release_path).basename.to_s
         web_container_id = capture("docker ps -q --filter 'name=#{release_name}_web'")
         execute :docker, 'pause', web_container_id
@@ -100,6 +101,7 @@ namespace :deploy do
 
   after :updating, :pull_images
   after :updating, :start_containers
+  after :updating, :pause_containers
   before :publishing, :claim_files_by_container
   before :failed, :claim_files_by_container
   after :failed, :purge_failed_containers
