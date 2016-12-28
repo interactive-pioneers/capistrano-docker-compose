@@ -9,6 +9,12 @@ Docker Compose specific tasks for Capistrano allowing seamless zero downtime con
 - Docker Compose 1.7
 - HAProxy 1.6
 
+## Supported databases
+
+| Database    | Versions tested |
+| --------    | --------------- |
+| PostgreSQL  | 9.5             |
+
 ## Installation
 
 Add this line to your application's Gemfile:
