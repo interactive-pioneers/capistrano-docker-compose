@@ -49,7 +49,7 @@ namespace :deploy do
         within fetch(:previous_release_path) do
           containers = capture :'docker-compose', 'ps', '-q'
           unless containers.empty?
-            info "Purging previous release containers at #{fetch(:previous_release_path)}"
+            info "Purging containers of previous release at #{fetch(:previous_release_path)}"
             execute :'docker-compose', 'down'
           end
         end
@@ -67,7 +67,7 @@ namespace :deploy do
       within fetch(:previous_release_path) do
         containers = capture :'docker-compose', 'ps', '-q'
         unless containers.empty?
-          info "Restarting previous release containers"
+          info "Restarting containers of previous release"
           execute :'docker-compose', 'start'
         end
       end
