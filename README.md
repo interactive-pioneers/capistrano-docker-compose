@@ -2,7 +2,7 @@
 
 Docker Compose specific tasks for Capistrano allowing seamless zero downtime containerised deployments.
 
-## Requirements
+## Minimum requirements
 
 - Capistrano 3.5
 - Docker Engine 1.11
