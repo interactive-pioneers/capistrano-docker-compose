@@ -2,7 +2,7 @@
 
 Docker Compose specific tasks for Capistrano allowing seamless zero downtime containerised deployments.
 
-## Requirements
+## Minimum requirements
 
 - Capistrano 3.5
 - Docker Engine 1.11
@@ -14,6 +14,7 @@ Docker Compose specific tasks for Capistrano allowing seamless zero downtime con
 | Database    | Versions tested |
 | --------    | --------------- |
 | PostgreSQL  | 9.5             |
+| MariaDB     | 5.5             |
 
 ## Installation
 
@@ -33,50 +34,50 @@ Or install it yourself as:
 
 ## Usage
 
-Create Docker Compose descriptors for each environment leaving `docker-compose.yml` as default for development environment, e.g.:
+1. Create Docker Compose descriptors for each environment leaving `docker-compose.yml` as default for development environment, e.g.:
 
   - `docker-compose.yml`
   - `docker-compose-staging.yml`
   - `docker-compose-production.yml`
 
-Make Compose YAML with `web` service using following environment variables:
+2. Make Compose YAML with `web` service (name is conventional) using following environment variables:
 
-- `CAP_DOCKER_COMPOSE_ROOT_PATH` for shared path
-- `CAP_DOCKER_COMPOSE_PORT` for port range
+  - `CAP_DOCKER_COMPOSE_ROOT_PATH` for shared path
+  - `CAP_DOCKER_COMPOSE_PORT` for port range
 
-See also [Compose YAML example](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/docker-compose-staging.example.yml).
+3. If you're using database service with migrations in Ruby on Rails, make sure to name database service as `db` (name is conventional). See also [Compose YAML example](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/docker-compose-staging.example.yml).
 
-Add `capistrano-docker-compose` to `Capfile`:
+4. Add `capistrano-docker-compose` to `Capfile`:
 
-``` ruby
-# Capfile
-require 'capistrano/docker/compose'
-```
+    ``` ruby
+    # Capfile
+    require 'capistrano/docker/compose'
+    ```
 
-Configure following Docker Compose specific options in `config/deploy.rb` and/or `config/deploy/<environment>.rb`:
+5. Configure following Docker Compose specific options in `config/deploy.rb` and/or `config/deploy/<environment>.rb`:
 
-```ruby
-# Define port range in respect to load balancer on server
-# If 2 or more environments reside on same server, configure port range as per environment
-# Ruby's Range object is expected, see http://ruby-doc.org/core-2.3.0/Range.html
-# Example: set :docker_compose_port_range, 2070..2071
-set :docker_compose_port_range, <port>..<port>
+    ```ruby
+    # Define port range in respect to load balancer on server
+    # If 2 or more environments reside on same server, configure port range as per environment
+    # Ruby's Range object is expected, see http://ruby-doc.org/core-2.3.0/Range.html
+    # Example: set :docker_compose_port_range, 2070..2071
+    set :docker_compose_port_range, <port>..<port>
 
-# OPTIONAL
-# User name when running the Docker image (reflecting Docker's USER instruction)
-# Example: set :docker_compose_user, 'pioneer'
-set :docker_compose_user, '<username>'
+    # OPTIONAL
+    # User name when running the Docker image (reflecting Docker's USER instruction)
+    # Example: set :docker_compose_user, 'pioneer'
+    set :docker_compose_user, '<username>'
 
-# OPTIONAL
-# Roles considered
-# Defaults to :all
-# Example: set :docker_compose_roles, :web
-set :docker_compose_roles, <roles>
-```
+    # OPTIONAL
+    # Roles considered
+    # Defaults to :all
+    # Example: set :docker_compose_roles, :web
+    set :docker_compose_roles, <roles>
+    ```
 
-Configure load balancer with port range defined in `docker_compose_port_range`, see [example configuration](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/haproxy.example.cfg).
+6. Configure HAProxy load balancer with port range defined in `docker_compose_port_range`, see [example configuration](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/haproxy.example.cfg).
 
-NB! Ensure load balancer's HTTP health check uses Layer 7 and corresponds to the needs of the particular application.
+  NB! Ensure load balancer's HTTP health check uses Layer 7 and corresponds to the needs of the particular application.
 
 ### PHP projects
 

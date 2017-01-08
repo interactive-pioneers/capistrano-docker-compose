@@ -25,7 +25,7 @@ namespace :deploy do
         with cap_docker_compose_root_path: fetch(:deploy_to), cap_docker_compose_port: detect_available_port do
           execute :'docker-compose', '-f', "docker-compose-#{fetch(:rails_env)}.yml", 'up', '-d'
           # Give services 3s to come up
-          # TODO: implement flexibly into options
+          # TODO: implement flexibly into options as timeout
           sleep 3
         end
       end
@@ -46,24 +46,13 @@ namespace :deploy do
   task :purge_old_containers do
     on roles(fetch(:docker_compose_roles)) do
       if fetch(:previous_release_path, false)
-        info "Purging previous release containers at #{fetch(:previous_release_path)}"
-
-        release_name = Pathname.new(release_path).basename.to_s
-        web_container_id = capture("docker ps -q --filter 'name=#{release_name}_web'")
-        execute :docker, 'pause', web_container_id
-
         within fetch(:previous_release_path) do
-          execute :'docker-compose', 'down'
+          containers = capture :'docker-compose', 'ps', '-q'
+          unless containers.empty?
+            info "Purging containers of previous release at #{fetch(:previous_release_path)}"
+            execute :'docker-compose', 'down'
+          end
         end
-
-        db_container_id = capture("docker ps -q --filter 'name=#{release_name}_db'")
-        execute :docker, 'restart', db_container_id
-
-        # Give services 3s to come up
-        # TODO: implement flexibly into options
-        sleep 3
-
-        execute :docker, 'unpause', web_container_id
       end
     end
   end
@@ -72,7 +61,29 @@ namespace :deploy do
     set :cap_docker_compose_failed, true
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
+        info "Purging failed containers at #{release_path}"
         execute :'docker-compose', 'down'
+      end
+      within fetch(:previous_release_path) do
+        containers = capture :'docker-compose', 'ps', '-q'
+        unless containers.empty?
+          info "Restarting containers of previous release"
+          execute :'docker-compose', 'start'
+        end
+      end
+    end
+  end
+
+  task :stop_previous_release do
+    on roles(fetch(:docker_compose_roles)) do
+      if fetch(:previous_release_path, false)
+        within fetch(:previous_release_path) do
+          containers = capture :'docker-compose', 'ps', '-q'
+          unless containers.empty?
+            info "Stopping containers of previous release"
+            execute :'docker-compose', 'stop'
+          end
+        end
       end
     end
   end
@@ -100,6 +111,7 @@ namespace :deploy do
 
   after :updating, :pull_images
   after :updating, :start_containers
+  before :migrate, :stop_previous_release
   before :publishing, :claim_files_by_container
   before :failed, :claim_files_by_container
   after :failed, :purge_failed_containers
