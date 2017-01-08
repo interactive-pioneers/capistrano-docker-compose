@@ -111,4 +111,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/intera
 
 ## Licence
 
-Copyright © 2016 Ain Tohvri, Interactive Pioneers GmbH. Licenced under [GPL-3](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/LICENSE).
+Copyright © 2016, 2017 Ain Tohvri, Interactive Pioneers GmbH. Licenced under [GPL-3](https://github.com/interactive-pioneers/capistrano-docker-compose/blob/master/LICENSE).
