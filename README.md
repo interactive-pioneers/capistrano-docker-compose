@@ -14,7 +14,7 @@ Docker Compose specific tasks for Capistrano allowing seamless zero downtime con
 | Database    | Versions tested |
 | --------    | --------------- |
 | PostgreSQL  | 9.5             |
-| MariaDB     | 5.5             |
+| MariaDB     | 5.5, 10.1       |
 
 ## Installation
 
