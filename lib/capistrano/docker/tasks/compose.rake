@@ -111,7 +111,7 @@ namespace :deploy do
 
   after :updating, :pull_images
   after :updating, :start_containers
-  before :migrate, :stop_previous_release
+  before :updated, :stop_previous_release
   before :publishing, :claim_files_by_container
   before :failed, :claim_files_by_container
   after :failed, :purge_failed_containers
