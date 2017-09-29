@@ -50,7 +50,7 @@ namespace :deploy do
           containers = capture :'docker-compose', 'ps', '-q'
           unless containers.empty?
             info "Purging containers of previous release at #{fetch(:previous_release_path)}"
-            execute :'docker-compose', 'down --remove-orphans'
+            execute :'docker-compose', 'down', '--remove-orphans'
           end
         end
       end
