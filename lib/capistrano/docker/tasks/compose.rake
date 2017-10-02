@@ -62,7 +62,7 @@ namespace :deploy do
     on roles(fetch(:docker_compose_roles)) do
       within release_path do
         info "Purging failed containers at #{release_path}"
-        execute :'docker-compose', 'down'
+        execute :'docker-compose', 'down', '--remove-orphans'
       end
       within fetch(:previous_release_path) do
         containers = capture :'docker-compose', 'ps', '-q'
